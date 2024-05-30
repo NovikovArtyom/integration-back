@@ -2,18 +2,22 @@ package test.project.integration.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import test.project.integration.backend.enums.Role;
 
 @Entity
-@Table(name = "tasks")
+@Table(name = "users")
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class TaskEntity {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String title;
-    private String description;
+    Long id;
+    String fullName;
+    String login;
+    String password;
+    @Enumerated(EnumType.STRING)
+    Role role;
 }
