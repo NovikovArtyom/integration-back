@@ -1,4 +1,4 @@
-package test.project.integration.backend.security;
+package test.project.integration.backend.dto;
 
 import lombok.Data;
 import test.project.integration.backend.enums.Role;

@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,11 +17,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
+@Slf4j
 public class TokenFilter extends OncePerRequestFilter {
+    private final JwtCore jwtCore;
+    private final UserDetailsService userDetailsService;
+
     @Autowired
-    private JwtCore jwtCore;
-    @Autowired
-    private UserDetailsService userDetailsService;
+    public TokenFilter(JwtCore jwtCore, UserDetailsService userDetailsService) {
+        this.jwtCore = jwtCore;
+        this.userDetailsService = userDetailsService;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -32,12 +38,14 @@ public class TokenFilter extends OncePerRequestFilter {
             String headerAuth = request.getHeader("Authorization");
             if (headerAuth != null && headerAuth.startsWith("Bearer ")) {
                 jwt = headerAuth.substring(7);
+                log.info(jwt);
             }
             if (jwt != null) {
                 try {
                     username = jwtCore.getNameFromJwt(jwt);
+                    log.info(username);
                 } catch (ExpiredJwtException e) {
-                    //TODO
+                    log.error("Не удалось распарсить JWT-токен");
                 }
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     userDetails = userDetailsService.loadUserByUsername(username);

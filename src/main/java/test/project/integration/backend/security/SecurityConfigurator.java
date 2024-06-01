@@ -23,16 +23,16 @@ import test.project.integration.backend.service.UserService;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurator {
-    @Autowired
-    private TokenFilter tokenFilter;
-    @Autowired
-    private UserService userService;
+    private final TokenFilter tokenFilter;
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    @Autowired
+    public SecurityConfigurator(TokenFilter tokenFilter, UserService userService, PasswordEncoder passwordEncoder) {
+        this.tokenFilter = tokenFilter;
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -40,7 +40,7 @@ public class SecurityConfigurator {
 
     @Autowired
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
     }
 
     @Bean
@@ -56,7 +56,7 @@ public class SecurityConfigurator {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/taskApi").fullyAuthenticated()
+                        .requestMatchers("/taskApi/**").fullyAuthenticated()
                         .anyRequest().permitAll())
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

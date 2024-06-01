@@ -1,4 +1,4 @@
-package test.project.integration.backend.security;
+package test.project.integration.backend.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import test.project.integration.backend.entity.UserEntity;
+import test.project.integration.backend.enums.Role;
 import test.project.integration.backend.repository.UserRepository;
+import test.project.integration.backend.security.JwtCore;
+import test.project.integration.backend.dto.LoginDto;
+import test.project.integration.backend.dto.RegistrationDto;
 
 @RestController
 @RequestMapping("/auth")
@@ -45,11 +49,12 @@ public class SecurityController {
         userEntity.setUsername(registrationDto.getUsername());
         userEntity.setEmail(registrationDto.getEmail());
         userEntity.setPassword(hashed);
+        userEntity.setRole(registrationDto.getRole());
         userRepository.save(userEntity);
         return ResponseEntity.ok("Пользователь успешно зарегистрирован!");
     }
 
-    @PostMapping("/signin")
+    @PostMapping("/login")
     public ResponseEntity<?> sigin(@RequestBody LoginDto loginDto) {
         Authentication authentication = null;
         try {

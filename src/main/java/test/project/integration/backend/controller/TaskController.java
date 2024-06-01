@@ -2,6 +2,8 @@ package test.project.integration.backend.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import test.project.integration.backend.dto.TaskDto;
 import test.project.integration.backend.entity.TaskEntity;
@@ -12,7 +14,6 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("/taskApi")
-@CrossOrigin
 @Slf4j
 public class TaskController {
     private final TaskService taskService;
@@ -22,9 +23,13 @@ public class TaskController {
     }
 
     @GetMapping("/tasks")
-    public Collection<TaskEntity> getAllTasks() {
+    public ResponseEntity<?> getAllTasks(Principal principal) {
         log.info("Получен GET-запрос на эндпоинт /tasks");
-        return taskService.getAllTasks();
+        log.info(String.valueOf(principal));
+        if (principal == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        return ResponseEntity.ok(taskService.getAllTasks());
     }
 
     @GetMapping("/secured")
