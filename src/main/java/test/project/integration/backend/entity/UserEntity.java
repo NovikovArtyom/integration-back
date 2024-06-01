@@ -14,10 +14,10 @@ import test.project.integration.backend.enums.Role;
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String fullName;
-    String login;
-    String password;
+    private Long id;
+    private String username;
+    private String email;
+    private String password;
     @Enumerated(EnumType.STRING)
-    Role role;
+    private Role role;
 }

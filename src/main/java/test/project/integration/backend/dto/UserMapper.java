@@ -9,8 +9,8 @@ public class UserMapper {
     public static UserDto toUserDto(UserEntity userEntity) {
         return new UserDto(
                 userEntity.getId(),
-                userEntity.getFullName(),
-                userEntity.getLogin(),
+                userEntity.getUsername(),
+                userEntity.getEmail(),
                 userEntity.getPassword(),
                 userEntity.getRole()
         );
@@ -19,8 +19,8 @@ public class UserMapper {
     public static UserEntity toUserEntity(UserDto userDto) {
         return new UserEntity(
                 userDto.getId(),
-                userDto.getFullName(),
-                userDto.getLogin(),
+                userDto.getUsername(),
+                userDto.getEmail(),
                 userDto.getPassword(),
                 userDto.getRole()
         );
