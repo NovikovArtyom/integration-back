@@ -6,11 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import test.project.integration.backend.dto.TaskDto;
-import test.project.integration.backend.entity.TaskEntity;
 import test.project.integration.backend.service.TaskService;
 
 import java.security.Principal;
-import java.util.Collection;
 
 @RestController
 @RequestMapping("/taskApi")

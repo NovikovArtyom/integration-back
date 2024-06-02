@@ -3,11 +3,13 @@ package test.project.integration.backend.security;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import test.project.integration.backend.entity.UserEntity;
 import test.project.integration.backend.enums.Role;
 
 import java.util.Collection;
+import java.util.Collections;
 
 @Data
 @AllArgsConstructor

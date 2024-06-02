@@ -1,9 +1,9 @@
 package test.project.integration.backend.security;
 
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
@@ -25,13 +24,13 @@ import test.project.integration.backend.service.UserService;
 public class SecurityConfigurator {
     private final TokenFilter tokenFilter;
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
+    private final EncoderConfig encoderConfig;
 
     @Autowired
-    public SecurityConfigurator(TokenFilter tokenFilter, UserService userService, PasswordEncoder passwordEncoder) {
+    public SecurityConfigurator(TokenFilter tokenFilter, UserService userService, EncoderConfig encoderConfig) {
         this.tokenFilter = tokenFilter;
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
+        this.encoderConfig = encoderConfig;
     }
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -40,8 +39,9 @@ public class SecurityConfigurator {
 
     @Autowired
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
+        auth.userDetailsService(userService).passwordEncoder(encoderConfig.passwordEncoder());
     }
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -56,7 +56,7 @@ public class SecurityConfigurator {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/taskApi/**").fullyAuthenticated()
+                        .requestMatchers("/taskApi/**").authenticated()
                         .anyRequest().permitAll())
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

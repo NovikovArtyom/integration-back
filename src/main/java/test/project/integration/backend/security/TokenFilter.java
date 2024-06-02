@@ -38,23 +38,25 @@ public class TokenFilter extends OncePerRequestFilter {
             String headerAuth = request.getHeader("Authorization");
             if (headerAuth != null && headerAuth.startsWith("Bearer ")) {
                 jwt = headerAuth.substring(7);
-                log.info(jwt);
+                log.info(String.format("Jwt-token = %s", jwt));
             }
             if (jwt != null) {
                 try {
                     username = jwtCore.getNameFromJwt(jwt);
-                    log.info(username);
+                    log.info(String.format("Username = %s", username));
                 } catch (ExpiredJwtException e) {
                     log.error("Не удалось распарсить JWT-токен");
                 }
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     userDetails = userDetailsService.loadUserByUsername(username);
-                    auth = new UsernamePasswordAuthenticationToken(userDetails, null);
+                    log.info(String.format("userDetails = %s", userDetails));
+                    auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    log.info(String.format("auth = %s", auth));
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }
         } catch (Exception e) {
-            //TODO
+            log.error("Authentication error", e);
         }
         filterChain.doFilter(request, response);
     }
