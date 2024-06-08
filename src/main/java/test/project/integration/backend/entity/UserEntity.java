@@ -2,10 +2,14 @@ package test.project.integration.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.validator.constraints.UniqueElements;
 import test.project.integration.backend.enums.Role;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "username"),
+        @UniqueConstraint(columnNames = "email")
+})
 @Getter
 @Setter
 @ToString

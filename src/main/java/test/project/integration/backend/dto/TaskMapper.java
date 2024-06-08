@@ -13,11 +13,17 @@ public class TaskMapper {
         );
     }
 
+    public static DoneTaskDto toDoneTaskDto(TaskEntity taskEntity) {
+        return new DoneTaskDto(taskEntity.getDone());
+    }
+
     public static TaskEntity toTaskEntity(TaskDto taskDto) {
         return new TaskEntity(
                 taskDto.getId(),
                 taskDto.getTitle(),
-                taskDto.getDescription()
+                taskDto.getDescription(),
+                null,
+                null
         );
     }
 }
